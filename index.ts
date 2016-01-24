@@ -12,7 +12,6 @@ export = function(){
             disks[disks.length - 1].partitions.push(part);
         }
 
-
     }
     return disks;
 }
