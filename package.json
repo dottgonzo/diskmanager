@@ -1,6 +1,6 @@
 {
   "name": "ls-disks",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -32,6 +32,6 @@
     "mocha": "^2.3.4"
   },
   "dependencies": {
-    "exec-sync": "^0.1.6"
+    "sync-exec": "^0.6.2"
   }
 }
