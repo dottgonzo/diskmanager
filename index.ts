@@ -11,7 +11,6 @@ export = function(){
             let part = { disk: fdi[i].split(" ")[0],sectors_start: fdi[i].replace(/ +(?= )/g,"").split(" ")[1],sectors_stop: fdi[i].replace(/ +(?= )/g,"").split(" ")[2],sectors: fdi[i].replace(/ +(?= )/g,"").split(" ")[3],size: fdi[i].replace(/ +(?= )/g,"").split(" ")[4],typeCode: fdi[i].replace(/ +(?= )/g,"").split(" ")[5] };
             disks[disks.length - 1].partitions.push(part);
         }
-
     }
     return disks;
 }
