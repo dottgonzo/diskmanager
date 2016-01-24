@@ -1,6 +1,6 @@
 {
-  "name": "ls-disk",
-  "version": "1.0.2",
+  "name": "ls-disks",
+  "version": "1.0.3",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dottgonzo/lsdisk.git"
+    "url": "git+https://github.com/dottgonzo/lsdisks.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/dottgonzo/lsdisk/issues"
+    "url": "https://github.com/dottgonzo/lsdisks/issues"
   },
-  "homepage": "https://github.com/dottgonzo/lsdisk#readme",
+  "homepage": "https://github.com/dottgonzo/lsdisks#readme",
   "devDependencies": {
     "chai": "^3.4.1",
     "gulp": "^3.9.0",
