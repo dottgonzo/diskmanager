@@ -1,8 +1,6 @@
 
 let execSync = require("exec-sync");
 
-
-
 export = function(){
     var fdi = execSync("fdisk -l|grep '/dev/s'").split("\n");
     let disks = [];
