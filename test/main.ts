@@ -1,3 +1,3 @@
 import disks=require("../index");
 
-console.log(disks());
+console.log(JSON.stringify(disks()));
