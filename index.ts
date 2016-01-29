@@ -11,14 +11,13 @@ export = function(device?: string) {
     let disks = [];
     for (var i = 0; i < fdi.length; i++) {
         let line = fdi[i].replace(/ +(?= )/g, "").split(" ");
-        if (fdi[i].split("/dev/s").length > 1 && fdi[i].split("isk").length > 1) {
+        if (fdi[i].split("/dev/ram").length < 2 && fdi[i].split("isk /").length > 1) {
 
             let disk = line[1].replace(":", "");
             let sectors = parseInt(line[6]);
             let size = parseInt(line[4]);
             disks.push({ disk: disk, sectors: sectors, size: size, partitions: [] });
-        } else if (fdi[i].split("/dev/s").length > 1 && line.length > 1) {
-
+        } else if (disks[0] && fdi[i].split(":").length < 2 && fdi[i].split("dev/").length > 1 && line.length > 1) {
 
             let partition = line[0];
             let boot;
