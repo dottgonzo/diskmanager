@@ -1,5 +1,5 @@
-
 let execSync = require("sync-exec");
+
 export = function(device?: string) {
     let cmd;
     if (device) {
