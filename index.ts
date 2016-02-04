@@ -81,7 +81,7 @@ export = {device(device: string) {
             disks[disks.length - 1].block = parseInt(line[5]);
         }
     }
-    
+
     disks[0].used_blocks=disks[0].partitions[disks[0].partitions.length-1].sectors_stop;
 
     return disks[0];
