@@ -149,7 +149,7 @@ all() {
 
 
 for(let i=0;i<disks.length;i++){
-    disks[i].used_blocks=disks[i].partitions[disks[0].partitions.length-1].sectors_stop;
+    disks[i].used_blocks=disks[i].partitions[disks[i].partitions.length-1].sectors_stop;
 }
 
     return disks;
