@@ -17,6 +17,7 @@ interface IDisk {
     size: number;
     partitions: IPartition[];
     block: number;
+    used_blocks:number;
 }
 
 
@@ -34,7 +35,7 @@ export = {device(device: string) {
             let disk = line[1].replace(":", "");
             let sectors = parseInt(line[6]);
             let size = parseInt(line[4]);
-            disks.push({ disk: disk, sectors: sectors, size: size, partitions: <IPartition[]>[], block: 512 });
+            disks.push({ disk: disk, sectors: sectors, size: size, partitions: <IPartition[]>[], block: 512, used_blocks:null });
         } else if (disks[0] && fdi[i].split(":").length < 2 && fdi[i].split("dev/").length > 1 && line.length > 1) {
 
             let partition = line[0];
@@ -80,6 +81,8 @@ export = {device(device: string) {
             disks[disks.length - 1].block = parseInt(line[5]);
         }
     }
+    
+    disks[0].used_blocks=disks[0].partitions[disks[0].partitions.length-1].sectors_stop;
 
     return disks[0];
 
@@ -97,7 +100,7 @@ all() {
             let disk = line[1].replace(":", "");
             let sectors = parseInt(line[6]);
             let size = parseInt(line[4]);
-            disks.push({ disk: disk, sectors: sectors, size: size, partitions: <IPartition[]>[], block: 512 });
+            disks.push({ disk: disk, sectors: sectors, size: size, partitions: <IPartition[]>[], block: 512, used_blocks:null });
         } else if (disks[0] && fdi[i].split(":").length < 2 && fdi[i].split("dev/").length > 1 && line.length > 1) {
 
             let partition = line[0];
@@ -143,6 +146,11 @@ all() {
             disks[disks.length - 1].block = parseInt(line[5]);
         }
     }
+
+
+for(let i=0;i<disks.length;i++){
+    disks[i].used_blocks=disks[i].partitions[disks[0].partitions.length-1].sectors_stop;
+}
 
     return disks;
 }
