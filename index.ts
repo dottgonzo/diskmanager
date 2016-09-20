@@ -23,8 +23,7 @@ interface IDisk {
 
 
 
-export = {
-    device(device: string) {
+export function device(device: string) {
     let cmd = "fdisk " + device + " -l";
 
     let fdi = execSync(cmd).stdout.split("\n");
@@ -86,9 +85,9 @@ export = {
 
     return disks[0];
 
-},
+}
 
-all() {
+export function all() {
 
         let cmd = "fdisk -l";
     let fdi = execSync(cmd).stdout.split("\n");
@@ -155,5 +154,4 @@ for(let i=0;i<disks.length;i++){
 }
 
     return disks;
-}
 }

@@ -1,3 +1,3 @@
-import disks = require("../index");
+import * as disks from "../index";
 
 console.log(JSON.stringify(disks.all()));
