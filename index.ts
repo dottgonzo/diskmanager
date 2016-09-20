@@ -10,7 +10,7 @@ interface IPartition {
     boot: boolean;
     size: number;
     label?: string;
-
+    name: string;
 }
 
 interface IDisk {
@@ -95,9 +95,9 @@ export function device(device: string) {
             let size = disks[disks.length - 1].block * sectors;
             let DISK: IPartition;
             if (labelexists) {
-                DISK = { label: label, partition: partition, sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot }
+                DISK = { label: label,name:partition.split('/')[partition.split('/').length - 1], partition: partition, sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot }
             } else {
-                DISK = { partition: partition, sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot }
+                DISK = { partition: partition,name:partition.split('/')[partition.split('/').length - 1], sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot }
             }
 
             disks[disks.length - 1].partitions.push(DISK);
@@ -186,9 +186,9 @@ export function all() {
 
             let DISK: IPartition;
             if (labelexists) {
-                DISK = { label: label, partition: partition, sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot }
+                DISK = { label: label,name:partition.split('/')[partition.split('/').length - 1], partition: partition, sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot }
             } else {
-                DISK = { partition: partition, sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot }
+                DISK = { partition: partition,name:partition.split('/')[partition.split('/').length - 1], sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot }
             }
 
             disks[disks.length - 1].partitions.push(DISK);
