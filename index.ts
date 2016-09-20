@@ -24,14 +24,10 @@ interface IDisk {
 
 
 
-
 export function device(device: string) {
     let cmd = "fdisk " + device + " -l";
 
-
-
     let blkidlines = execSync("blkid").stdout.split("\n");
-
 
     let fdi = execSync(cmd).stdout.split("\n");
     let disks = <IDisk[]>[];
@@ -146,9 +142,6 @@ export function all() {
                     }
                 }
             }
-
-
-
 
 
             let partition = line[0];
