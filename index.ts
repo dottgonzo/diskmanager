@@ -9,6 +9,8 @@ interface IPartition {
     type: string;
     boot: boolean;
     size: number;
+    label?: string;
+
 }
 
 interface IDisk {
@@ -17,7 +19,7 @@ interface IDisk {
     size: number;
     partitions: IPartition[];
     block: number;
-    used_blocks:number;
+    used_blocks: number;
 }
 
 
@@ -26,6 +28,11 @@ interface IDisk {
 export function device(device: string) {
     let cmd = "fdisk " + device + " -l";
 
+
+
+    let blkidlines = execSync("blkid").stdout.split("\n");
+
+
     let fdi = execSync(cmd).stdout.split("\n");
     let disks = <IDisk[]>[];
     for (let i = 0; i < fdi.length; i++) {
@@ -35,8 +42,22 @@ export function device(device: string) {
             let disk = line[1].replace(":", "");
             let sectors = parseInt(line[6]);
             let size = parseInt(line[4]);
-            disks.push({ disk: disk, sectors: sectors, size: size, partitions: <IPartition[]>[], block: 512, used_blocks:null });
+            disks.push({ disk: disk, sectors: sectors, size: size, partitions: <IPartition[]>[], block: 512, used_blocks: null });
         } else if (disks[0] && fdi[i].split(":").length < 2 && fdi[i].split("dev/").length > 1 && line.length > 1) {
+            let label;
+            let labelexists = false;
+            for (let b = 0; b < blkidlines.length; b++) {
+                let bline = blkidlines[b].replace(/ +(?= )/g, "").split(" ");
+                if (bline[0] == line[0] + ":") {
+                    for (let bl = 0; bl < bline.length; bl++) {
+                        if (bline[bl].split('ABEL="').length > 1 && bline[bl].split('ABEL="')[1].split('"')[0].split(":").length < 2) {
+                            labelexists = true;
+                            label = bline[bl].split('ABEL="')[1].split('"')[0]
+                        }
+                    }
+                }
+            }
+
 
             let partition = line[0];
             let boot;
@@ -76,12 +97,19 @@ export function device(device: string) {
                 }
             }
             let size = disks[disks.length - 1].block * sectors;
-            disks[disks.length - 1].partitions.push({ partition: partition, sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot });
+            let DISK: IPartition;
+            if (labelexists) {
+                DISK = { label: label, partition: partition, sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot }
+            } else {
+                DISK = { partition: partition, sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot }
+            }
+
+            disks[disks.length - 1].partitions.push(DISK);
         } else if (disks[0] && line[0] === "Units:") {
             disks[disks.length - 1].block = parseInt(line[5]);
         }
     }
-    disks[0].used_blocks=disks[0].partitions[disks[0].partitions.length-1].sectors_stop;
+    disks[0].used_blocks = disks[0].partitions[disks[0].partitions.length - 1].sectors_stop;
 
     return disks[0];
 
@@ -89,7 +117,9 @@ export function device(device: string) {
 
 export function all() {
 
-        let cmd = "fdisk -l";
+    let blkidlines = execSync("blkid").stdout.split("\n");
+
+    let cmd = "fdisk -l";
     let fdi = execSync(cmd).stdout.split("\n");
     let disks = <IDisk[]>[];
     for (let i = 0; i < fdi.length; i++) {
@@ -99,8 +129,27 @@ export function all() {
             let disk = line[1].replace(":", "");
             let sectors = parseInt(line[6]);
             let size = parseInt(line[4]);
-            disks.push({ disk: disk, sectors: sectors, size: size, partitions: <IPartition[]>[], block: 512, used_blocks:null });
+            disks.push({ disk: disk, sectors: sectors, size: size, partitions: <IPartition[]>[], block: 512, used_blocks: null });
         } else if (disks[0] && fdi[i].split(":").length < 2 && fdi[i].split("dev/").length > 1 && line.length > 1) {
+
+
+            let label;
+            let labelexists = false;
+            for (let b = 0; b < blkidlines.length; b++) {
+                let bline = blkidlines[b].replace(/ +(?= )/g, "").split(" ");
+                if (bline[0] === line[0] + ":") {
+                    for (let bl = 0; bl < bline.length; bl++) {
+                        if (bline[bl].split('ABEL="').length > 1 && bline[bl].split('ABEL="')[1].split('"')[0].split(":").length < 2) {
+                            labelexists = true;
+                            label = bline[bl].split('ABEL="')[1].split('"')[0]
+                        }
+                    }
+                }
+            }
+
+
+
+
 
             let partition = line[0];
             let boot;
@@ -139,19 +188,28 @@ export function all() {
                     }
                 }
             }
+
             let size = disks[disks.length - 1].block * sectors;
-            disks[disks.length - 1].partitions.push({ partition: partition, sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot });
+
+            let DISK: IPartition;
+            if (labelexists) {
+                DISK = { label: label, partition: partition, sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot }
+            } else {
+                DISK = { partition: partition, sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot }
+            }
+
+            disks[disks.length - 1].partitions.push(DISK);
         } else if (disks[0] && line[0] === "Units:") {
             disks[disks.length - 1].block = parseInt(line[5]);
         }
     }
 
 
-for(let i=0;i<disks.length;i++){
-    if(disks[i].partitions.length>0){
-    disks[i].used_blocks=disks[i].partitions[disks[i].partitions.length-1].sectors_stop;
+    for (let i = 0; i < disks.length; i++) {
+        if (disks[i].partitions.length > 0) {
+            disks[i].used_blocks = disks[i].partitions[disks[i].partitions.length - 1].sectors_stop;
+        }
     }
-}
 
     return disks;
 }
