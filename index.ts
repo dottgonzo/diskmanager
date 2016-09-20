@@ -23,7 +23,8 @@ interface IDisk {
 
 
 
-export = {device(device: string) {
+export = {
+    device(device: string) {
     let cmd = "fdisk " + device + " -l";
 
     let fdi = execSync(cmd).stdout.split("\n");
@@ -81,7 +82,6 @@ export = {device(device: string) {
             disks[disks.length - 1].block = parseInt(line[5]);
         }
     }
-
     disks[0].used_blocks=disks[0].partitions[disks[0].partitions.length-1].sectors_stop;
 
     return disks[0];
@@ -149,7 +149,9 @@ all() {
 
 
 for(let i=0;i<disks.length;i++){
+    if(disks[i].partitions.length>0){
     disks[i].used_blocks=disks[i].partitions[disks[i].partitions.length-1].sectors_stop;
+    }
 }
 
     return disks;
