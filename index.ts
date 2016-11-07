@@ -1,4 +1,7 @@
-let execSync = require("sync-exec");
+const execSync = require("sync-exec");
+
+
+
 
 
 interface IPartition {
@@ -11,6 +14,11 @@ interface IPartition {
     size: number;
     label?: string;
     name: string;
+    humansize:string;
+    used:string;
+    available:string;
+    percentused:string;
+    mounted:string;
 }
 
 interface IDisk {
@@ -25,19 +33,19 @@ interface IDisk {
 
 
 export function device(device: string) {
-    let cmd = "fdisk " + device + " -l";
+    const cmd = "fdisk " + device + " -l";
 
-    let blkidlines = execSync("blkid").stdout.split("\n");
+    const blkidlines = execSync("blkid").stdout.split("\n");
 
-    let fdi = execSync(cmd).stdout.split("\n");
-    let disks = <IDisk[]>[];
+    const fdi = execSync(cmd).stdout.split("\n");
+    const disks = <IDisk[]>[];
     for (let i = 0; i < fdi.length; i++) {
         let line: string[] = fdi[i].replace(/ +(?= )/g, "").split(" ");
         if (fdi[i].split("/dev/ram").length < 2 && fdi[i].split("isk /").length > 1) {
 
-            let disk = line[1].replace(":", "");
-            let sectors = parseInt(line[6]);
-            let size = parseInt(line[4]);
+            const disk = line[1].replace(":", "");
+            const sectors = parseInt(line[6]);
+            const size = parseInt(line[4]);
             disks.push({ disk: disk, sectors: sectors, size: size, partitions: <IPartition[]>[], block: 512, used_blocks: null });
         } else if (disks[0] && fdi[i].split(":").length < 2 && fdi[i].split("dev/").length > 1 && line.length > 1) {
             let label;
@@ -55,7 +63,7 @@ export function device(device: string) {
             }
 
 
-            let partition = line[0];
+            const partition = line[0];
             let boot;
             let sector_start;
             let sector_stop;
@@ -92,13 +100,33 @@ export function device(device: string) {
                     }
                 }
             }
-            let size = disks[disks.length - 1].block * sectors;
+            const size = disks[disks.length - 1].block * sectors;
             let DISK: IPartition;
             if (labelexists) {
-                DISK = { label: label,name:partition.split('/')[partition.split('/').length - 1], partition: partition, sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot }
+                DISK = { mounted:'',percentused:'',used:'',available:'',humansize:'',label: label, name: partition.split('/')[partition.split('/').length - 1], partition: partition, sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot }
             } else {
-                DISK = { partition: partition,name:partition.split('/')[partition.split('/').length - 1], sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot }
+                DISK = { mounted:'',percentused:'',used:'',available:'',humansize:'',partition: partition, name: partition.split('/')[partition.split('/').length - 1], sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot }
             }
+
+
+
+            const diskutilization = execSync("df -BM --no-sync").stdout.split("\n");
+
+
+            for (var du = 0; du < diskutilization.length; du++) {
+                const row = diskutilization[du].replace(/ +(?= )/g, "").split(" ")
+                if (row[0] === partition) {
+                    DISK.humansize = row[1]
+                    DISK.available = row[3]
+                    DISK.used = row[2]
+                    DISK.percentused = row[4]
+                    DISK.mounted = row[5]
+
+                }
+            }
+
+
+
 
             disks[disks.length - 1].partitions.push(DISK);
         } else if (disks[0] && line[0] === "Units:") {
@@ -113,18 +141,18 @@ export function device(device: string) {
 
 export function all() {
 
-    let blkidlines = execSync("blkid").stdout.split("\n");
+    const blkidlines = execSync("blkid").stdout.split("\n");
 
-    let cmd = "fdisk -l";
-    let fdi = execSync(cmd).stdout.split("\n");
-    let disks = <IDisk[]>[];
+    const cmd = "fdisk -l";
+    const fdi = execSync(cmd).stdout.split("\n");
+    const disks = <IDisk[]>[];
     for (let i = 0; i < fdi.length; i++) {
-        let line: string[] = fdi[i].replace(/ +(?= )/g, "").split(" ");
+        const line: string[] = fdi[i].replace(/ +(?= )/g, "").split(" ");
         if (fdi[i].split("/dev/ram").length < 2 && fdi[i].split("isk /").length > 1) {
 
-            let disk = line[1].replace(":", "");
-            let sectors = parseInt(line[6]);
-            let size = parseInt(line[4]);
+            const disk = line[1].replace(":", "");
+            const sectors = parseInt(line[6]);
+            const size = parseInt(line[4]);
             disks.push({ disk: disk, sectors: sectors, size: size, partitions: <IPartition[]>[], block: 512, used_blocks: null });
         } else if (disks[0] && fdi[i].split(":").length < 2 && fdi[i].split("dev/").length > 1 && line.length > 1) {
 
@@ -144,7 +172,7 @@ export function all() {
             }
 
 
-            let partition = line[0];
+            const partition = line[0];
             let boot;
             let sector_start;
             let sector_stop;
@@ -182,14 +210,36 @@ export function all() {
                 }
             }
 
-            let size = disks[disks.length - 1].block * sectors;
+
+
+
+
+            const size = disks[disks.length - 1].block * sectors;
 
             let DISK: IPartition;
             if (labelexists) {
-                DISK = { label: label,name:partition.split('/')[partition.split('/').length - 1], partition: partition, sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot }
+                DISK = { mounted:'',percentused:'',used:'',available:'',humansize:'',label: label, name: partition.split('/')[partition.split('/').length - 1], partition: partition, sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot }
             } else {
-                DISK = { partition: partition,name:partition.split('/')[partition.split('/').length - 1], sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot }
+                DISK = { mounted:'',percentused:'',used:'',available:'',humansize:'',partition: partition, name: partition.split('/')[partition.split('/').length - 1], sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot }
             }
+
+
+            const diskutilization = execSync("df -BM --no-sync").stdout.split("\n");
+
+
+            for (var du = 0; du < diskutilization.length; du++) {
+                const row = diskutilization[du].replace(/ +(?= )/g, "").split(" ")
+                if (row[0] === partition) {
+                    DISK.humansize = row[1]
+                    DISK.available = row[3]
+                    DISK.used = row[2]
+                    DISK.percentused = row[4]
+                    DISK.mounted = row[5]
+
+                }
+            }
+
+
 
             disks[disks.length - 1].partitions.push(DISK);
         } else if (disks[0] && line[0] === "Units:") {
