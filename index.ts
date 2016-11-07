@@ -103,9 +103,9 @@ export function device(device: string) {
             const size = disks[disks.length - 1].block * sectors;
             let DISK: IPartition;
             if (labelexists) {
-                DISK = { mounted:'',percentused:'',used:'',available:'',humansize:'',label: label, name: partition.split('/')[partition.split('/').length - 1], partition: partition, sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot }
+                DISK = { label: label, name: partition.split('/')[partition.split('/').length - 1], partition: partition, sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot, mounted:'',percentused:'',used:'',available:'',humansize:'' }
             } else {
-                DISK = { mounted:'',percentused:'',used:'',available:'',humansize:'',partition: partition, name: partition.split('/')[partition.split('/').length - 1], sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot }
+                DISK = { partition: partition, name: partition.split('/')[partition.split('/').length - 1], sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot, mounted:'',percentused:'',used:'',available:'',humansize:'' }
             }
 
 
@@ -218,9 +218,9 @@ export function all() {
 
             let DISK: IPartition;
             if (labelexists) {
-                DISK = { mounted:'',percentused:'',used:'',available:'',humansize:'',label: label, name: partition.split('/')[partition.split('/').length - 1], partition: partition, sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot }
+                DISK = { label: label, name: partition.split('/')[partition.split('/').length - 1], partition: partition, sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot, mounted:'',percentused:'',used:'',available:'',humansize:'' }
             } else {
-                DISK = { mounted:'',percentused:'',used:'',available:'',humansize:'',partition: partition, name: partition.split('/')[partition.split('/').length - 1], sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot }
+                DISK = { partition: partition, name: partition.split('/')[partition.split('/').length - 1], sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot, mounted:'',percentused:'',used:'',available:'',humansize:'' }
             }
 
 
