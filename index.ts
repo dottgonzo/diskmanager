@@ -1,9 +1,6 @@
 const execSync = require("sync-exec");
 
 
-
-
-
 interface IPartition {
     partition: string;
     sectors: number;
@@ -33,9 +30,9 @@ interface IDisk {
 
 
 export function device(device: string) {
-    const cmd = "fdisk " + device + " -l";
+    const cmd = "sudo fdisk " + device + " -l";
 
-    const blkidlines = execSync("blkid").stdout.split("\n");
+    const blkidlines = execSync("sudo blkid").stdout.split("\n");
 
     const fdi = execSync(cmd).stdout.split("\n");
     const disks = <IDisk[]>[];
@@ -141,9 +138,9 @@ export function device(device: string) {
 
 export function all() {
 
-    const blkidlines = execSync("blkid").stdout.split("\n");
+    const blkidlines = execSync("sudo blkid").stdout.split("\n");
 
-    const cmd = "fdisk -l";
+    const cmd = "sudo fdisk -l";
     const fdi = execSync(cmd).stdout.split("\n");
     const disks = <IDisk[]>[];
     for (let i = 0; i < fdi.length; i++) {

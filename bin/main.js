@@ -1,4 +1,4 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var disks = require("../index");
 console.log(JSON.stringify(disks.all()));
-
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImJpbi9tYWluLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBLElBQVksS0FBSyxXQUFNLFVBQVUsQ0FBQyxDQUFBO0FBRWxDLE9BQU8sQ0FBQyxHQUFHLENBQUMsSUFBSSxDQUFDLFNBQVMsQ0FBQyxLQUFLLENBQUMsR0FBRyxFQUFFLENBQUMsQ0FBQyxDQUFDIiwiZmlsZSI6ImJpbi9tYWluLmpzIiwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0ICogYXMgZGlza3MgZnJvbSBcIi4uL2luZGV4XCI7XG5cbmNvbnNvbGUubG9nKEpTT04uc3RyaW5naWZ5KGRpc2tzLmFsbCgpKSk7Il0sInNvdXJjZVJvb3QiOiIvc291cmNlLyJ9
