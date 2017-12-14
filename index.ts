@@ -37,6 +37,17 @@ export function device(disk: string): IDisk {
   throw new Error('not founded')
 }
 
+
+export function partitionFromUuid(uuid: string): IPartition {
+  for (let i = 0; i < all().length; i++) {
+    for (let ii = 0; ii < all()[i].partitions.length; ii++) {
+      if (all()[i].partitions[ii].UUID === uuid) return all()[i].partitions[ii]
+    }
+  }
+  throw new Error('not founded')
+}
+
+
 export function all(): IDisk[] {
 
   const blkidlines = execSync("sudo blkid").stdout.split("\n");
