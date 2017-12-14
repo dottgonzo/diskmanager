@@ -30,14 +30,14 @@ interface IDisk {
 
 
 
-export function device(disk: string) {
+export function device(disk: string): IDisk {
   for (let i = 0; i < all().length; i++) {
     if (all()[i].disk === disk) return all()[i]
   }
   throw new Error('not founded')
 }
 
-export function all() {
+export function all(): IDisk[] {
 
   const blkidlines = execSync("sudo blkid").stdout.split("\n");
 
