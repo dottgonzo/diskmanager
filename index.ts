@@ -38,13 +38,13 @@ export function device(disk: string): IDisk {
 }
 
 
-export function partitionFromUuid(uuid: string): IPartition {
+export function partitionFromUuid(uuid: string): IPartition | false {
   for (let i = 0; i < all().length; i++) {
     for (let ii = 0; ii < all()[i].partitions.length; ii++) {
       if (all()[i].partitions[ii].UUID === uuid) return all()[i].partitions[ii]
     }
   }
-  throw new Error('not founded')
+  return false
 }
 
 

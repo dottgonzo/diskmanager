@@ -16,7 +16,7 @@ function partitionFromUuid(uuid) {
                 return all()[i].partitions[ii];
         }
     }
-    throw new Error('not founded');
+    return false;
 }
 exports.partitionFromUuid = partitionFromUuid;
 function all() {

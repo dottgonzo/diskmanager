@@ -22,7 +22,7 @@ describe('ls disk', function () {
     });
     describe('check properties by UUID', function () {
         it('partition must have UUID', function () {
-            expect(disks.partitionFromUuid('f1a15224-37e2-4a11-8437-7127ba1360bb')).to.have.property('UUID');
+            expect(disks.partitionFromUuid('f1a15224-37e2-47ba1360bb')).to.have.property('UUID');
         });
     });
 });
