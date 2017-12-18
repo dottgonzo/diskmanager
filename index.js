@@ -9,6 +9,16 @@ function device(disk) {
     throw new Error('not founded');
 }
 exports.device = device;
+function partitionFromUuid(uuid) {
+    for (var i = 0; i < all().length; i++) {
+        for (var ii = 0; ii < all()[i].partitions.length; ii++) {
+            if (all()[i].partitions[ii].UUID === uuid)
+                return all()[i].partitions[ii];
+        }
+    }
+    throw new Error('not founded');
+}
+exports.partitionFromUuid = partitionFromUuid;
 function all() {
     var blkidlines = execSync("sudo blkid").stdout.split("\n");
     var cmd = "sudo fdisk -l";
