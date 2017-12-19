@@ -27,6 +27,7 @@ describe('ls disk', function () {
     });
     describe('listavailablepartitions', function () {
         it('list available partitions', function () {
+            console.log(JSON.stringify(disks.listAvailablePartitions()));
             expect(disks.listAvailablePartitions()).to.be.an('Array');
         });
     });

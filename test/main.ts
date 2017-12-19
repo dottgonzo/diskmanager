@@ -46,6 +46,7 @@ this.timeout(20000)
     describe('listavailablepartitions', () => {
 
         it('list available partitions', () => {
+            console.log(JSON.stringify(disks.listAvailablePartitions()))
             expect(disks.listAvailablePartitions()).to.be.an('Array')
         })
     })
