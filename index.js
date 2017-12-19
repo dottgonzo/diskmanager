@@ -25,7 +25,7 @@ function listAvailablePartitions() {
     var allDisks = all();
     for (var i = 0; i < allDisks.length; i++) {
         for (var ii = 0; ii < allDisks[i].partitions.length; ii++) {
-            if (allDisks[i].partitions[ii].UUID && allDisks[i].partitions[ii].available && allDisks[i].partitions[ii].available.length > 1 && parseInt(allDisks[i].partitions[ii].available) > 1)
+            if (allDisks[i].partitions[ii].UUID && allDisks[i].partitions[ii].type !== 'Extended')
                 partitions.push(allDisks[i].partitions[ii]);
         }
     }
