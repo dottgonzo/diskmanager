@@ -20,8 +20,19 @@ describe('ls disk', function () {
             expect(disks.all()[0].partitions[0]).to.have.property('UUID');
         });
     });
+    describe('listpartitions', function () {
+        it('list all partitions', function () {
+            expect(disks.listPartitions()).to.be.an('Array');
+        });
+    });
+    describe('listavailablepartitions', function () {
+        it('list available partitions', function () {
+            console.log(JSON.stringify(disks.listAvailablePartitions()));
+            expect(disks.listAvailablePartitions()).to.be.an('Array');
+        });
+    });
     describe('check properties by UUID', function () {
-        it('partition must have UUID', function () {
+        it('find a partition by UUID', function () {
             expect(disks.partitionFromUuid('f1a15224-37e2-47ba1360bb')).to.have.property('UUID');
         });
     });

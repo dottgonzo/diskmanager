@@ -10,15 +10,40 @@ function device(disk) {
 }
 exports.device = device;
 function partitionFromUuid(uuid) {
-    for (var i = 0; i < all().length; i++) {
-        for (var ii = 0; ii < all()[i].partitions.length; ii++) {
-            if (all()[i].partitions[ii].UUID === uuid)
-                return all()[i].partitions[ii];
+    var allDisks = all();
+    for (var i = 0; i < allDisks.length; i++) {
+        for (var ii = 0; ii < allDisks[i].partitions.length; ii++) {
+            if (allDisks[i].partitions[ii].UUID === uuid)
+                return allDisks[i].partitions[ii];
         }
     }
     return false;
 }
 exports.partitionFromUuid = partitionFromUuid;
+function listAvailablePartitions() {
+    var partitions = [];
+    var allDisks = all();
+    for (var i = 0; i < allDisks.length; i++) {
+        for (var ii = 0; ii < allDisks[i].partitions.length; ii++) {
+            if (allDisks[i].partitions[ii].UUID && allDisks[i].partitions[ii].available && allDisks[i].partitions[ii].available.length > 1 && parseInt(allDisks[i].partitions[ii].available) > 1)
+                partitions.push(allDisks[i].partitions[ii]);
+        }
+    }
+    return partitions;
+}
+exports.listAvailablePartitions = listAvailablePartitions;
+function listPartitions() {
+    var partitions = [];
+    var allDisks = all();
+    for (var i = 0; i < allDisks.length; i++) {
+        for (var ii = 0; ii < allDisks[i].partitions.length; ii++) {
+            if (allDisks[i].partitions[ii].UUID)
+                partitions.push(allDisks[i].partitions[ii]);
+        }
+    }
+    return partitions;
+}
+exports.listPartitions = listPartitions;
 function all() {
     var blkidlines = execSync("sudo blkid").stdout.split("\n");
     var cmd = "sudo fdisk -l";

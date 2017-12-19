@@ -39,14 +39,50 @@ export function device(disk: string): IDisk {
 
 
 export function partitionFromUuid(uuid: string): IPartition | false {
-  for (let i = 0; i < all().length; i++) {
-    for (let ii = 0; ii < all()[i].partitions.length; ii++) {
-      if (all()[i].partitions[ii].UUID === uuid) return all()[i].partitions[ii]
+  const allDisks = all()
+  for (let i = 0; i < allDisks.length; i++) {
+    for (let ii = 0; ii < allDisks[i].partitions.length; ii++) {
+      if (allDisks[i].partitions[ii].UUID === uuid) return allDisks[i].partitions[ii]
     }
   }
   return false
 }
 
+
+export function listAvailablePartitions(): IPartition[] {
+
+  const partitions: IPartition[] = []
+
+  const allDisks = all()
+
+  for (let i = 0; i < allDisks.length; i++) {
+    for (let ii = 0; ii < allDisks[i].partitions.length; ii++) {
+      if (allDisks[i].partitions[ii].UUID && allDisks[i].partitions[ii].available && allDisks[i].partitions[ii].available.length > 1 && parseInt(allDisks[i].partitions[ii].available)>1) partitions.push(allDisks[i].partitions[ii])
+    }
+  }
+
+  return partitions
+
+
+}
+
+
+export function listPartitions(): IPartition[] {
+
+  const partitions: IPartition[] = []
+
+  const allDisks = all()
+
+  for (let i = 0; i < allDisks.length; i++) {
+    for (let ii = 0; ii < allDisks[i].partitions.length; ii++) {
+      if (allDisks[i].partitions[ii].UUID) partitions.push(allDisks[i].partitions[ii])
+    }
+  }
+
+  return partitions
+
+
+}
 
 export function all(): IDisk[] {
 
@@ -77,7 +113,7 @@ export function all(): IDisk[] {
               labelexists = true;
               label = bline[bl].split('ABEL="')[1].split('"')[0]
             }
-            if (bline[bl].split('UID="').length > 1 && bline[bl].split('ARTUUID="').length < 2  && bline[bl].split('UID="')[1].split('"')[0].split(":").length < 2) {
+            if (bline[bl].split('UID="').length > 1 && bline[bl].split('ARTUUID="').length < 2 && bline[bl].split('UID="')[1].split('"')[0].split(":").length < 2) {
               uuid = bline[bl].split('UID="')[1].split('"')[0]
             }
           }

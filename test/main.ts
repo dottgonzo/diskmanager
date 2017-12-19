@@ -34,9 +34,25 @@ this.timeout(20000)
 
     })
 
+
+    describe('listpartitions', () => {
+
+        it('list all partitions', () => {
+            expect(disks.listPartitions()).to.be.an('Array')
+        })
+    })
+
+
+    describe('listavailablepartitions', () => {
+
+        it('list available partitions', () => {
+            expect(disks.listAvailablePartitions()).to.be.an('Array')
+        })
+    })
+
     describe('check properties by UUID', () => {
 
-        it('partition must have UUID', () => {
+        it('find a partition by UUID', () => {
 
             expect(disks.partitionFromUuid('f1a15224-37e2-47ba1360bb')).to.have.property('UUID')
         })
