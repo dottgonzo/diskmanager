@@ -1,7 +1,7 @@
 const execSync = require("sync-exec");
 
 
-interface IPartition {
+export interface IPartition {
   partition: string
   sectors: number
   sectors_start: number
@@ -19,7 +19,7 @@ interface IPartition {
   UUID: string
 }
 
-interface IDisk {
+export interface IDisk {
   disk: string
   sectors: number
   size: number;
