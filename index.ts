@@ -17,6 +17,7 @@ export interface IPartition {
   percentused: string
   mounted: string
   UUID: string
+  disk:string
 }
 
 export interface IDisk {
@@ -167,9 +168,9 @@ export function all(): IDisk[] {
 
       let DISK: IPartition;
       if (labelexists) {
-        DISK = { UUID: uuid, label: label, name: partition.split('/')[partition.split('/').length - 1], partition: partition, sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot, mounted: '', percentused: '', used: '', available: '', humansize: '' }
+        DISK = { UUID: uuid, disk: disks[disks.length - 1].disk, label: label, name: partition.split('/')[partition.split('/').length - 1], partition: partition, sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot, mounted: '', percentused: '', used: '', available: '', humansize: '' }
       } else {
-        DISK = { UUID: uuid, partition: partition, name: partition.split('/')[partition.split('/').length - 1], sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot, mounted: '', percentused: '', used: '', available: '', humansize: '' }
+        DISK = { UUID: uuid, disk: disks[disks.length - 1].disk, partition: partition, name: partition.split('/')[partition.split('/').length - 1], sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot, mounted: '', percentused: '', used: '', available: '', humansize: '' }
       }
 
 
