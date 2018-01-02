@@ -1,6 +1,19 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var execSync = require("sync-exec");
+function FolderStat(folder) {
+    var folderutilization = execSync("df -BM --no-sync " + folder).stdout.split("\n");
+    var row = folderutilization[1].replace(/ +(?= )/g, "").split(" ");
+    var folderObj = {
+        humansize: row[1],
+        available: row[3],
+        used: row[2],
+        percentused: row[4],
+        mounted: row[5],
+    };
+    return folderObj;
+}
+exports.FolderStat = FolderStat;
 function device(disk) {
     for (var i = 0; i < all().length; i++) {
         if (all()[i].disk === disk)

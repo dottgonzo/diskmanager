@@ -36,4 +36,10 @@ describe('ls disk', function () {
             expect(disks.partitionFromUuid('f1a15224-37e2-47ba1360bb')).to.have.property('UUID');
         });
     });
+    describe('checkfolder', function () {
+        it('check folder stats', function () {
+            expect(disks.FolderStat('/home')).to.have.property('mounted');
+            console.log(disks.FolderStat('/home'));
+        });
+    });
 });

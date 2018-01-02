@@ -58,11 +58,18 @@ this.timeout(20000)
             expect(disks.partitionFromUuid('f1a15224-37e2-47ba1360bb')).to.have.property('UUID')
         })
 
-
-
-
     })
 
+
+    describe('checkfolder', () => {
+
+        it('check folder stats', () => {
+
+            expect(disks.FolderStat('/home')).to.have.property('mounted')
+            console.log(disks.FolderStat('/home'))
+        })
+
+    })
 
     
 })

@@ -31,6 +31,29 @@ export interface IDisk {
 
 
 
+export function FolderStat(folder){
+
+  const folderutilization = execSync("df -BM --no-sync "+folder).stdout.split("\n");
+
+
+  
+    const row = folderutilization[1].replace(/ +(?= )/g, "").split(" ")
+    const folderObj = {
+      humansize: row[1],
+      available: row[3],
+      used: row[2],
+      percentused: row[4],
+      mounted: row[5],
+
+    }
+
+
+
+return folderObj
+
+}
+
+
 export function device(disk: string): IDisk {
   for (let i = 0; i < all().length; i++) {
     if (all()[i].disk === disk) return all()[i]
