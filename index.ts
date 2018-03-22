@@ -18,6 +18,7 @@ export interface IPartition {
   mounted: string
   UUID: string
   disk:string
+  fileSystemType:string
 }
 
 export interface IDisk {
@@ -128,6 +129,7 @@ export function all(): IDisk[] {
       let uuid;
       let label;
       let labelexists = false;
+      let fileSystemType:string
       for (let b = 0; b < blkidlines.length; b++) {
         let bline = blkidlines[b].replace(/ +(?= )/g, "").split(" ")
 
@@ -140,6 +142,10 @@ export function all(): IDisk[] {
             if (bline[bl].split('UID="').length > 1 && bline[bl].split('ARTUUID="').length < 2 && bline[bl].split('UID="')[1].split('"')[0].split(":").length < 2) {
               uuid = bline[bl].split('UID="')[1].split('"')[0]
             }
+            if (bline[bl].split('TYPE="').length > 1 && bline[bl].split('TYPE="')[1].split('"')[0]) {
+              fileSystemType = bline[bl].split('TYPE="')[1].split('"')[0]
+            }
+
           }
         }
       }
@@ -191,9 +197,9 @@ export function all(): IDisk[] {
 
       let DISK: IPartition;
       if (labelexists) {
-        DISK = { UUID: uuid, disk: disks[disks.length - 1].disk, label: label, name: partition.split('/')[partition.split('/').length - 1], partition: partition, sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot, mounted: '', percentused: '', used: '', available: '', humansize: '' }
+        DISK = { fileSystemType:fileSystemType, UUID: uuid, disk: disks[disks.length - 1].disk, label: label, name: partition.split('/')[partition.split('/').length - 1], partition: partition, sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot, mounted: '', percentused: '', used: '', available: '', humansize: '' }
       } else {
-        DISK = { UUID: uuid, disk: disks[disks.length - 1].disk, partition: partition, name: partition.split('/')[partition.split('/').length - 1], sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot, mounted: '', percentused: '', used: '', available: '', humansize: '' }
+        DISK = { fileSystemType:fileSystemType, UUID: uuid, disk: disks[disks.length - 1].disk, partition: partition, name: partition.split('/')[partition.split('/').length - 1], sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot, mounted: '', percentused: '', used: '', available: '', humansize: '' }
       }
 
 
