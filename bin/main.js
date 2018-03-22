@@ -1,4 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+#!/usr/bin/env node
+
 var disks = require("../index");
 console.log(JSON.stringify(disks.all()));

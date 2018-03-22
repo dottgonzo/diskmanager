@@ -3,6 +3,9 @@
   "version": "1.5.3",
   "description": "",
   "main": "index.js",
+  "bin": {
+    "lsdisks": "./bin/conchunks.sh"
+  },
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha",
     "build": "./node_modules/typescript/bin/tsc"
