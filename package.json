@@ -1,10 +1,10 @@
 {
   "name": "ls-disks",
-  "version": "1.5.4",
+  "version": "1.5.5",
   "description": "",
   "main": "index.js",
   "bin": {
-    "lsdisks": "./bin/conchunks.sh"
+    "lsdisks": "./bin/main.sh"
   },
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha",
