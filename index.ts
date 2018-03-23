@@ -93,7 +93,7 @@ export function listAvailablePartitions(): IPartition[] {
 
   for (let i = 0; i < allDisks.length; i++) {
     for (let ii = 0; ii < allDisks[i].partitions.length; ii++) {
-      if (allDisks[i].partitions[ii].UUID && allDisks[i].partitions[ii].type!=='Extended') partitions.push(allDisks[i].partitions[ii])
+      if ((allDisks[i].partitions[ii].UUID||allDisks[i].partitions[ii].partUuid) && allDisks[i].partitions[ii].type!=='Extended') partitions.push(allDisks[i].partitions[ii])
     }
   }
 
@@ -111,7 +111,7 @@ export function listPartitions(): IPartition[] {
 
   for (let i = 0; i < allDisks.length; i++) {
     for (let ii = 0; ii < allDisks[i].partitions.length; ii++) {
-      if (allDisks[i].partitions[ii].UUID) partitions.push(allDisks[i].partitions[ii])
+      if (allDisks[i].partitions[ii].UUID||allDisks[i].partitions[ii].partUuid) partitions.push(allDisks[i].partitions[ii])
     }
   }
 

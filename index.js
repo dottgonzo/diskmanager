@@ -49,7 +49,7 @@ function listAvailablePartitions() {
     var allDisks = all();
     for (var i = 0; i < allDisks.length; i++) {
         for (var ii = 0; ii < allDisks[i].partitions.length; ii++) {
-            if (allDisks[i].partitions[ii].UUID && allDisks[i].partitions[ii].type !== 'Extended')
+            if ((allDisks[i].partitions[ii].UUID || allDisks[i].partitions[ii].partUuid) && allDisks[i].partitions[ii].type !== 'Extended')
                 partitions.push(allDisks[i].partitions[ii]);
         }
     }
@@ -61,7 +61,7 @@ function listPartitions() {
     var allDisks = all();
     for (var i = 0; i < allDisks.length; i++) {
         for (var ii = 0; ii < allDisks[i].partitions.length; ii++) {
-            if (allDisks[i].partitions[ii].UUID)
+            if (allDisks[i].partitions[ii].UUID || allDisks[i].partitions[ii].partUuid)
                 partitions.push(allDisks[i].partitions[ii]);
         }
     }
