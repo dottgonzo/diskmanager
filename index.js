@@ -75,6 +75,7 @@ function all() {
             var label = void 0;
             var labelexists = false;
             var fileSystemType = void 0;
+            var partUuid = void 0;
             for (var b = 0; b < blkidlines.length; b++) {
                 var bline = blkidlines[b].replace(/ +(?= )/g, "").split(" ");
                 if (bline[0] === line[0] + ":") {
@@ -88,6 +89,9 @@ function all() {
                         }
                         if (bline[bl].split('TYPE="').length > 1 && bline[bl].split('TYPE="')[1].split('"')[0]) {
                             fileSystemType = bline[bl].split('TYPE="')[1].split('"')[0];
+                        }
+                        if (bline[bl].split('PARTUUID="').length > 1 && bline[bl].split('PARTUUID="')[1].split('"')[0]) {
+                            partUuid = bline[bl].split('PARTUUID="')[1].split('"')[0];
                         }
                     }
                 }
@@ -132,10 +136,10 @@ function all() {
             var size = disks[disks.length - 1].block * sectors;
             var DISK = void 0;
             if (labelexists) {
-                DISK = { fileSystemType: fileSystemType, UUID: uuid, disk: disks[disks.length - 1].disk, label: label, name: partition.split('/')[partition.split('/').length - 1], partition: partition, sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot, mounted: '', percentused: '', used: '', available: '', humansize: '' };
+                DISK = { partUuid: partUuid, fileSystemType: fileSystemType, UUID: uuid, disk: disks[disks.length - 1].disk, label: label, name: partition.split('/')[partition.split('/').length - 1], partition: partition, sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot, mounted: '', percentused: '', used: '', available: '', humansize: '' };
             }
             else {
-                DISK = { fileSystemType: fileSystemType, UUID: uuid, disk: disks[disks.length - 1].disk, partition: partition, name: partition.split('/')[partition.split('/').length - 1], sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot, mounted: '', percentused: '', used: '', available: '', humansize: '' };
+                DISK = { partUuid: partUuid, fileSystemType: fileSystemType, UUID: uuid, disk: disks[disks.length - 1].disk, partition: partition, name: partition.split('/')[partition.split('/').length - 1], sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot, mounted: '', percentused: '', used: '', available: '', humansize: '' };
             }
             var diskutilization = execSync("df -BM --no-sync").stdout.split("\n");
             for (var du = 0; du < diskutilization.length; du++) {
