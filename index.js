@@ -33,6 +33,17 @@ function partitionFromUuid(uuid) {
     return false;
 }
 exports.partitionFromUuid = partitionFromUuid;
+function partitionFromPartUuid(partUuid) {
+    var allDisks = all();
+    for (var i = 0; i < allDisks.length; i++) {
+        for (var ii = 0; ii < allDisks[i].partitions.length; ii++) {
+            if (allDisks[i].partitions[ii].partUuid === partUuid)
+                return allDisks[i].partitions[ii];
+        }
+    }
+    return false;
+}
+exports.partitionFromPartUuid = partitionFromPartUuid;
 function listAvailablePartitions() {
     var partitions = [];
     var allDisks = all();

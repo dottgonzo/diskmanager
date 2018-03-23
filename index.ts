@@ -75,6 +75,16 @@ export function partitionFromUuid(uuid: string): IPartition | false {
 }
 
 
+export function partitionFromPartUuid(partUuid: string): IPartition | false {
+  const allDisks = all()
+  for (let i = 0; i < allDisks.length; i++) {
+    for (let ii = 0; ii < allDisks[i].partitions.length; ii++) {
+      if (allDisks[i].partitions[ii].partUuid === partUuid) return allDisks[i].partitions[ii]
+    }
+  }
+  return false
+}
+
 export function listAvailablePartitions(): IPartition[] {
 
   const partitions: IPartition[] = []
