@@ -1,4 +1,5 @@
 const execSync = require("sync-exec");
+import * as hasbin from "hasbin"
 
 
 export interface IPartition {
@@ -20,6 +21,8 @@ export interface IPartition {
   disk:string
   fileSystemType:string
   partUuid:string
+  bitLockerVolumeUuid?: string
+  bitLockerDatasetUuid?:string
 }
 
 export interface IDisk {
@@ -31,6 +34,8 @@ export interface IDisk {
   used_blocks: number
 }
 
+
+// sudo dislocker-metadata -V /dev/sdc1
 
 
 export function FolderStat(folder){
@@ -120,7 +125,12 @@ export function listPartitions(): IPartition[] {
 
 }
 
-export function all(): IDisk[] {
+export function all(options?:{checkBitlocker?:boolean}): IDisk[] {
+
+if(!options)  options={}
+
+if(options.checkBitlocker!==false || hasbin.sync('dislocker')) options.checkBitlocker=true
+
 
   const blkidlines = execSync("sudo blkid").stdout.split("\n");
 
@@ -165,6 +175,9 @@ export function all(): IDisk[] {
       }
 
 
+
+
+
       const partition = line[0];
       let boot;
       let sector_start;
@@ -173,6 +186,23 @@ export function all(): IDisk[] {
 
       let type = "";
       let typeId;
+
+
+      let bitLockerVolumeUuid:string
+      let bitLockerDatasetUuid:string
+
+      if(options.checkBitlocker){
+        
+
+        const bitLockerCheckDiskOut=execSync("sudo dislocker-metadata -V "+partition).stdout.split("\n");
+        for(let i=0;i<bitLockerCheckDiskOut.length;i++){
+          if(bitLockerCheckDiskOut[i].split('Volume GUID: ').length>1) bitLockerVolumeUuid=bitLockerCheckDiskOut[i].split("Volume GUID: '")[1].split("'")[0]
+        }
+        for(let i=0;i<bitLockerCheckDiskOut.length;i++){
+          if(bitLockerCheckDiskOut[i].split('Dataset GUID: ').length>1) bitLockerDatasetUuid=bitLockerCheckDiskOut[i].split("Dataset GUID: '")[1].split("'")[0]
+        }  
+      }
+
 
       if (line[1] === "*") {
         boot = true;
@@ -216,6 +246,8 @@ export function all(): IDisk[] {
         DISK = { partUuid:partUuid, fileSystemType:fileSystemType, UUID: uuid, disk: disks[disks.length - 1].disk, partition: partition, name: partition.split('/')[partition.split('/').length - 1], sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot, mounted: '', percentused: '', used: '', available: '', humansize: '' }
       }
 
+      if(bitLockerVolumeUuid) DISK.bitLockerVolumeUuid=bitLockerVolumeUuid
+      if(bitLockerDatasetUuid) DISK.bitLockerDatasetUuid=bitLockerDatasetUuid
 
       const diskutilization = execSync("df -BM --no-sync").stdout.split("\n");
 

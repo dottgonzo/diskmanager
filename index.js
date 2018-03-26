@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var execSync = require("sync-exec");
+var hasbin = require("hasbin");
 function FolderStat(folder) {
     var folderutilization = execSync("df -BM --no-sync " + folder).stdout.split("\n");
     var row = folderutilization[1].replace(/ +(?= )/g, "").split(" ");
@@ -68,7 +69,11 @@ function listPartitions() {
     return partitions;
 }
 exports.listPartitions = listPartitions;
-function all() {
+function all(options) {
+    if (!options)
+        options = {};
+    if (options.checkBitlocker !== false || hasbin.sync('dislocker'))
+        options.checkBitlocker = true;
     var blkidlines = execSync("sudo blkid").stdout.split("\n");
     var cmd = "sudo fdisk -l";
     var fdi = execSync(cmd).stdout.split("\n");
@@ -114,6 +119,19 @@ function all() {
             var sectors = void 0;
             var type = "";
             var typeId = void 0;
+            var bitLockerVolumeUuid = void 0;
+            var bitLockerDatasetUuid = void 0;
+            if (options.checkBitlocker) {
+                var bitLockerCheckDiskOut = execSync("sudo dislocker-metadata -V " + partition).stdout.split("\n");
+                for (var i_1 = 0; i_1 < bitLockerCheckDiskOut.length; i_1++) {
+                    if (bitLockerCheckDiskOut[i_1].split('Volume GUID: ').length > 1)
+                        bitLockerVolumeUuid = bitLockerCheckDiskOut[i_1].split("Volume GUID: '")[1].split("'")[0];
+                }
+                for (var i_2 = 0; i_2 < bitLockerCheckDiskOut.length; i_2++) {
+                    if (bitLockerCheckDiskOut[i_2].split('Dataset GUID: ').length > 1)
+                        bitLockerDatasetUuid = bitLockerCheckDiskOut[i_2].split("Dataset GUID: '")[1].split("'")[0];
+                }
+            }
             if (line[1] === "*") {
                 boot = true;
                 sector_start = parseInt(line[2]);
@@ -152,6 +170,10 @@ function all() {
             else {
                 DISK = { partUuid: partUuid, fileSystemType: fileSystemType, UUID: uuid, disk: disks[disks.length - 1].disk, partition: partition, name: partition.split('/')[partition.split('/').length - 1], sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot, mounted: '', percentused: '', used: '', available: '', humansize: '' };
             }
+            if (bitLockerVolumeUuid)
+                DISK.bitLockerVolumeUuid = bitLockerVolumeUuid;
+            if (bitLockerDatasetUuid)
+                DISK.bitLockerDatasetUuid = bitLockerDatasetUuid;
             var diskutilization = execSync("df -BM --no-sync").stdout.split("\n");
             for (var du = 0; du < diskutilization.length; du++) {
                 var row = diskutilization[du].replace(/ +(?= )/g, "").split(" ");
