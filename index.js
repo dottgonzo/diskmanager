@@ -23,24 +23,29 @@ function device(disk) {
     throw new Error('not founded');
 }
 exports.device = device;
+function partitionFromBitlockerUuid(BitlockerUuid) {
+    var allPartitions = listPartitions();
+    for (var ii = 0; ii < allPartitions.length; ii++) {
+        if (allPartitions[ii].bitLockerVolumeUuid === BitlockerUuid)
+            return allPartitions[ii];
+    }
+    return false;
+}
+exports.partitionFromBitlockerUuid = partitionFromBitlockerUuid;
 function partitionFromUuid(uuid) {
-    var allDisks = all();
-    for (var i = 0; i < allDisks.length; i++) {
-        for (var ii = 0; ii < allDisks[i].partitions.length; ii++) {
-            if (allDisks[i].partitions[ii].UUID === uuid)
-                return allDisks[i].partitions[ii];
-        }
+    var allPartitions = listPartitions();
+    for (var ii = 0; ii < allPartitions.length; ii++) {
+        if (allPartitions[ii].UUID === uuid)
+            return allPartitions[ii];
     }
     return false;
 }
 exports.partitionFromUuid = partitionFromUuid;
 function partitionFromPartUuid(partUuid) {
-    var allDisks = all();
-    for (var i = 0; i < allDisks.length; i++) {
-        for (var ii = 0; ii < allDisks[i].partitions.length; ii++) {
-            if (allDisks[i].partitions[ii].partUuid === partUuid)
-                return allDisks[i].partitions[ii];
-        }
+    var allPartitions = listPartitions();
+    for (var ii = 0; ii < allPartitions.length; ii++) {
+        if (allPartitions[ii].partUuid === partUuid)
+            return allPartitions[ii];
     }
     return false;
 }

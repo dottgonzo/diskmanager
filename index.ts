@@ -18,11 +18,11 @@ export interface IPartition {
   percentused: string
   mounted: string
   UUID: string
-  disk:string
-  fileSystemType:string
-  partUuid:string
+  disk: string
+  fileSystemType: string
+  partUuid: string
   bitLockerVolumeUuid?: string
-  bitLockerDatasetUuid?:string
+  bitLockerDatasetUuid?: string
 }
 
 export interface IDisk {
@@ -38,25 +38,25 @@ export interface IDisk {
 // sudo dislocker-metadata -V /dev/sdc1
 
 
-export function FolderStat(folder){
+export function FolderStat(folder) {
 
-  const folderutilization = execSync("df -BM --no-sync "+folder).stdout.split("\n");
-
-
-  
-    const row = folderutilization[1].replace(/ +(?= )/g, "").split(" ")
-    const folderObj = {
-      humansize: row[1],
-      available: row[3],
-      used: row[2],
-      percentused: row[4],
-      mounted: row[5],
-
-    }
+  const folderutilization = execSync("df -BM --no-sync " + folder).stdout.split("\n");
 
 
 
-return folderObj
+  const row = folderutilization[1].replace(/ +(?= )/g, "").split(" ")
+  const folderObj = {
+    humansize: row[1],
+    available: row[3],
+    used: row[2],
+    percentused: row[4],
+    mounted: row[5],
+
+  }
+
+
+
+  return folderObj
 
 }
 
@@ -69,24 +69,34 @@ export function device(disk: string): IDisk {
 }
 
 
-export function partitionFromUuid(uuid: string): IPartition | false {
-  const allDisks = all()
-  for (let i = 0; i < allDisks.length; i++) {
-    for (let ii = 0; ii < allDisks[i].partitions.length; ii++) {
-      if (allDisks[i].partitions[ii].UUID === uuid) return allDisks[i].partitions[ii]
+
+export function partitionFromBitlockerUuid(BitlockerUuid: string): IPartition | false {
+  const allPartitions = listPartitions()
+    for (let ii = 0; ii < allPartitions.length; ii++) {
+      if (allPartitions[ii].bitLockerVolumeUuid === BitlockerUuid) return allPartitions[ii]
     }
-  }
+  
+  return false
+}
+
+
+
+export function partitionFromUuid(uuid: string): IPartition | false {
+  const allPartitions = listPartitions()
+    for (let ii = 0; ii < allPartitions.length; ii++) {
+      if (allPartitions[ii].UUID === uuid) return allPartitions[ii]
+    }
+  
   return false
 }
 
 
 export function partitionFromPartUuid(partUuid: string): IPartition | false {
-  const allDisks = all()
-  for (let i = 0; i < allDisks.length; i++) {
-    for (let ii = 0; ii < allDisks[i].partitions.length; ii++) {
-      if (allDisks[i].partitions[ii].partUuid === partUuid) return allDisks[i].partitions[ii]
-    }
+  const allPartitions = listPartitions()
+  for (let ii = 0; ii < allPartitions.length; ii++) {
+    if (allPartitions[ii].partUuid === partUuid) return allPartitions[ii]
   }
+
   return false
 }
 
@@ -98,7 +108,7 @@ export function listAvailablePartitions(): IPartition[] {
 
   for (let i = 0; i < allDisks.length; i++) {
     for (let ii = 0; ii < allDisks[i].partitions.length; ii++) {
-      if ((allDisks[i].partitions[ii].UUID||allDisks[i].partitions[ii].partUuid) && allDisks[i].partitions[ii].type!=='Extended') partitions.push(allDisks[i].partitions[ii])
+      if ((allDisks[i].partitions[ii].UUID || allDisks[i].partitions[ii].partUuid) && allDisks[i].partitions[ii].type !== 'Extended') partitions.push(allDisks[i].partitions[ii])
     }
   }
 
@@ -116,7 +126,7 @@ export function listPartitions(): IPartition[] {
 
   for (let i = 0; i < allDisks.length; i++) {
     for (let ii = 0; ii < allDisks[i].partitions.length; ii++) {
-      if (allDisks[i].partitions[ii].UUID||allDisks[i].partitions[ii].partUuid) partitions.push(allDisks[i].partitions[ii])
+      if (allDisks[i].partitions[ii].UUID || allDisks[i].partitions[ii].partUuid) partitions.push(allDisks[i].partitions[ii])
     }
   }
 
@@ -125,11 +135,11 @@ export function listPartitions(): IPartition[] {
 
 }
 
-export function all(options?:{checkBitlocker?:boolean}): IDisk[] {
+export function all(options?: { checkBitlocker?: boolean }): IDisk[] {
 
-if(!options)  options={}
+  if (!options) options = {}
 
-if(options.checkBitlocker!==false || hasbin.sync('dislocker')) options.checkBitlocker=true
+  if (options.checkBitlocker !== false || hasbin.sync('dislocker')) options.checkBitlocker = true
 
 
   const blkidlines = execSync("sudo blkid").stdout.split("\n");
@@ -147,11 +157,11 @@ if(options.checkBitlocker!==false || hasbin.sync('dislocker')) options.checkBitl
       disks.push({ disk: disk, sectors: sectors, size: size, partitions: <IPartition[]>[], block: 512, used_blocks: null });
     } else if (disks[0] && fdi[i].split(":").length < 2 && fdi[i].split("dev/").length > 1 && line.length > 1) {
 
-      let uuid:string;
-      let label:string;
+      let uuid: string;
+      let label: string;
       let labelexists = false;
-      let fileSystemType:string
-      let partUuid:string
+      let fileSystemType: string
+      let partUuid: string
       for (let b = 0; b < blkidlines.length; b++) {
         let bline = blkidlines[b].replace(/ +(?= )/g, "").split(" ")
 
@@ -188,19 +198,19 @@ if(options.checkBitlocker!==false || hasbin.sync('dislocker')) options.checkBitl
       let typeId;
 
 
-      let bitLockerVolumeUuid:string
-      let bitLockerDatasetUuid:string
+      let bitLockerVolumeUuid: string
+      let bitLockerDatasetUuid: string
 
-      if(options.checkBitlocker){
-        
+      if (options.checkBitlocker) {
 
-        const bitLockerCheckDiskOut=execSync("sudo dislocker-metadata -V "+partition).stdout.split("\n");
-        for(let i=0;i<bitLockerCheckDiskOut.length;i++){
-          if(bitLockerCheckDiskOut[i].split('Volume GUID: ').length>1) bitLockerVolumeUuid=bitLockerCheckDiskOut[i].split("Volume GUID: '")[1].split("'")[0]
+
+        const bitLockerCheckDiskOut = execSync("sudo dislocker-metadata -V " + partition).stdout.split("\n");
+        for (let i = 0; i < bitLockerCheckDiskOut.length; i++) {
+          if (bitLockerCheckDiskOut[i].split('Volume GUID: ').length > 1) bitLockerVolumeUuid = bitLockerCheckDiskOut[i].split("Volume GUID: '")[1].split("'")[0]
         }
-        for(let i=0;i<bitLockerCheckDiskOut.length;i++){
-          if(bitLockerCheckDiskOut[i].split('Dataset GUID: ').length>1) bitLockerDatasetUuid=bitLockerCheckDiskOut[i].split("Dataset GUID: '")[1].split("'")[0]
-        }  
+        for (let i = 0; i < bitLockerCheckDiskOut.length; i++) {
+          if (bitLockerCheckDiskOut[i].split('Dataset GUID: ').length > 1) bitLockerDatasetUuid = bitLockerCheckDiskOut[i].split("Dataset GUID: '")[1].split("'")[0]
+        }
       }
 
 
@@ -241,13 +251,13 @@ if(options.checkBitlocker!==false || hasbin.sync('dislocker')) options.checkBitl
 
       let DISK: IPartition;
       if (labelexists) {
-        DISK = { partUuid:partUuid, fileSystemType:fileSystemType, UUID: uuid, disk: disks[disks.length - 1].disk, label: label, name: partition.split('/')[partition.split('/').length - 1], partition: partition, sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot, mounted: '', percentused: '', used: '', available: '', humansize: '' }
+        DISK = { partUuid: partUuid, fileSystemType: fileSystemType, UUID: uuid, disk: disks[disks.length - 1].disk, label: label, name: partition.split('/')[partition.split('/').length - 1], partition: partition, sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot, mounted: '', percentused: '', used: '', available: '', humansize: '' }
       } else {
-        DISK = { partUuid:partUuid, fileSystemType:fileSystemType, UUID: uuid, disk: disks[disks.length - 1].disk, partition: partition, name: partition.split('/')[partition.split('/').length - 1], sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot, mounted: '', percentused: '', used: '', available: '', humansize: '' }
+        DISK = { partUuid: partUuid, fileSystemType: fileSystemType, UUID: uuid, disk: disks[disks.length - 1].disk, partition: partition, name: partition.split('/')[partition.split('/').length - 1], sectors_start: sector_start, sectors_stop: sector_stop, sectors: sectors, size: size, type: type, boot: boot, mounted: '', percentused: '', used: '', available: '', humansize: '' }
       }
 
-      if(bitLockerVolumeUuid) DISK.bitLockerVolumeUuid=bitLockerVolumeUuid
-      if(bitLockerDatasetUuid) DISK.bitLockerDatasetUuid=bitLockerDatasetUuid
+      if (bitLockerVolumeUuid) DISK.bitLockerVolumeUuid = bitLockerVolumeUuid
+      if (bitLockerDatasetUuid) DISK.bitLockerDatasetUuid = bitLockerDatasetUuid
 
       const diskutilization = execSync("df -BM --no-sync").stdout.split("\n");
 
