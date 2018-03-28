@@ -22,7 +22,6 @@ export interface IPartition {
   fileSystemType: string
   partUuid: string
   bitLockerVolumeUuid?: string
-  bitLockerDatasetUuid?: string
 }
 
 export interface IDisk {
@@ -199,18 +198,16 @@ export function all(options?: { checkBitlocker?: boolean }): IDisk[] {
 
 
       let bitLockerVolumeUuid: string
-      let bitLockerDatasetUuid: string
 
+      
       if (options.checkBitlocker) {
 
 
         const bitLockerCheckDiskOut = execSync("sudo dislocker-metadata -V " + partition).stdout.split("\n");
         for (let i = 0; i < bitLockerCheckDiskOut.length; i++) {
-          if (bitLockerCheckDiskOut[i].split('Volume GUID: ').length > 1) bitLockerVolumeUuid = bitLockerCheckDiskOut[i].split("Volume GUID: '")[1].split("'")[0]
+          if (bitLockerCheckDiskOut[i].split("Recovery Key GUID: '").length > 1) bitLockerVolumeUuid = bitLockerCheckDiskOut[i].split("Recovery Key GUID: '")[1].split("'")[0]
         }
-        for (let i = 0; i < bitLockerCheckDiskOut.length; i++) {
-          if (bitLockerCheckDiskOut[i].split('Dataset GUID: ').length > 1) bitLockerDatasetUuid = bitLockerCheckDiskOut[i].split("Dataset GUID: '")[1].split("'")[0]
-        }
+
       }
 
 
@@ -257,8 +254,8 @@ export function all(options?: { checkBitlocker?: boolean }): IDisk[] {
       }
 
       if (bitLockerVolumeUuid) DISK.bitLockerVolumeUuid = bitLockerVolumeUuid
-      if (bitLockerDatasetUuid) DISK.bitLockerDatasetUuid = bitLockerDatasetUuid
 
+      
       const diskutilization = execSync("df -BM --no-sync").stdout.split("\n");
 
 

@@ -125,16 +125,11 @@ function all(options) {
             var type = "";
             var typeId = void 0;
             var bitLockerVolumeUuid = void 0;
-            var bitLockerDatasetUuid = void 0;
             if (options.checkBitlocker) {
                 var bitLockerCheckDiskOut = execSync("sudo dislocker-metadata -V " + partition).stdout.split("\n");
                 for (var i_1 = 0; i_1 < bitLockerCheckDiskOut.length; i_1++) {
-                    if (bitLockerCheckDiskOut[i_1].split('Volume GUID: ').length > 1)
-                        bitLockerVolumeUuid = bitLockerCheckDiskOut[i_1].split("Volume GUID: '")[1].split("'")[0];
-                }
-                for (var i_2 = 0; i_2 < bitLockerCheckDiskOut.length; i_2++) {
-                    if (bitLockerCheckDiskOut[i_2].split('Dataset GUID: ').length > 1)
-                        bitLockerDatasetUuid = bitLockerCheckDiskOut[i_2].split("Dataset GUID: '")[1].split("'")[0];
+                    if (bitLockerCheckDiskOut[i_1].split("Recovery Key GUID: '").length > 1)
+                        bitLockerVolumeUuid = bitLockerCheckDiskOut[i_1].split("Recovery Key GUID: '")[1].split("'")[0];
                 }
             }
             if (line[1] === "*") {
@@ -177,8 +172,6 @@ function all(options) {
             }
             if (bitLockerVolumeUuid)
                 DISK.bitLockerVolumeUuid = bitLockerVolumeUuid;
-            if (bitLockerDatasetUuid)
-                DISK.bitLockerDatasetUuid = bitLockerDatasetUuid;
             var diskutilization = execSync("df -BM --no-sync").stdout.split("\n");
             for (var du = 0; du < diskutilization.length; du++) {
                 var row = diskutilization[du].replace(/ +(?= )/g, "").split(" ");
