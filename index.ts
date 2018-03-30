@@ -71,10 +71,10 @@ export function device(disk: string): IDisk {
 
 export function partitionFromBitlockerUuid(BitlockerUuid: string): IPartition | false {
   const allPartitions = listPartitions()
-    for (let ii = 0; ii < allPartitions.length; ii++) {
-      if (allPartitions[ii].bitLockerVolumeUuid === BitlockerUuid) return allPartitions[ii]
-    }
-  
+  for (let ii = 0; ii < allPartitions.length; ii++) {
+    if (allPartitions[ii].bitLockerVolumeUuid === BitlockerUuid) return allPartitions[ii]
+  }
+
   return false
 }
 
@@ -82,10 +82,10 @@ export function partitionFromBitlockerUuid(BitlockerUuid: string): IPartition | 
 
 export function partitionFromUuid(uuid: string): IPartition | false {
   const allPartitions = listPartitions()
-    for (let ii = 0; ii < allPartitions.length; ii++) {
-      if (allPartitions[ii].UUID === uuid) return allPartitions[ii]
-    }
-  
+  for (let ii = 0; ii < allPartitions.length; ii++) {
+    if (allPartitions[ii].UUID === uuid) return allPartitions[ii]
+  }
+
   return false
 }
 
@@ -199,13 +199,20 @@ export function all(options?: { checkBitlocker?: boolean }): IDisk[] {
 
       let bitLockerVolumeUuid: string
 
-      
+
       if (options.checkBitlocker) {
 
+        const newArrayOfLineOfRightDatum: string[] = []
+
+        let finded288ByteRow = false
 
         const bitLockerCheckDiskOut = execSync("sudo dislocker-metadata -V " + partition).stdout.split("\n");
         for (let i = 0; i < bitLockerCheckDiskOut.length; i++) {
-          if (bitLockerCheckDiskOut[i].split("Recovery Key GUID: '").length > 1) bitLockerVolumeUuid = bitLockerCheckDiskOut[i].split("Recovery Key GUID: '")[1].split("'")[0]
+          if (bitLockerCheckDiskOut[i].split("datum size: 0x0120 (288)").length === 2) finded288ByteRow = true
+          if (bitLockerCheckDiskOut[i].split("Recovery Key GUID: '").length > 1 && finded288ByteRow && !bitLockerVolumeUuid) {
+            bitLockerVolumeUuid = bitLockerCheckDiskOut[i].split("Recovery Key GUID: '")[1].split("'")[0]
+            break
+          }
         }
 
       }
@@ -255,7 +262,7 @@ export function all(options?: { checkBitlocker?: boolean }): IDisk[] {
 
       if (bitLockerVolumeUuid) DISK.bitLockerVolumeUuid = bitLockerVolumeUuid
 
-      
+
       const diskutilization = execSync("df -BM --no-sync").stdout.split("\n");
 
 

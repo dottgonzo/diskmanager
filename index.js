@@ -126,10 +126,16 @@ function all(options) {
             var typeId = void 0;
             var bitLockerVolumeUuid = void 0;
             if (options.checkBitlocker) {
+                var newArrayOfLineOfRightDatum = [];
+                var finded288ByteRow = false;
                 var bitLockerCheckDiskOut = execSync("sudo dislocker-metadata -V " + partition).stdout.split("\n");
                 for (var i_1 = 0; i_1 < bitLockerCheckDiskOut.length; i_1++) {
-                    if (bitLockerCheckDiskOut[i_1].split("Recovery Key GUID: '").length > 1)
+                    if (bitLockerCheckDiskOut[i_1].split("datum size: 0x0120 (288)").length === 2)
+                        finded288ByteRow = true;
+                    if (bitLockerCheckDiskOut[i_1].split("Recovery Key GUID: '").length > 1 && finded288ByteRow && !bitLockerVolumeUuid) {
                         bitLockerVolumeUuid = bitLockerCheckDiskOut[i_1].split("Recovery Key GUID: '")[1].split("'")[0];
+                        break;
+                    }
                 }
             }
             if (line[1] === "*") {
